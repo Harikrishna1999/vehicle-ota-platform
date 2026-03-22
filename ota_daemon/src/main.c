@@ -9,17 +9,18 @@
 
 int main()
 {
-    setbuf(stdout,NULL);
+    setbuf(stdout, NULL);
+
     char url[256];
     char expected_hash[65];
     char calculated_hash[65];
 
-    while(1)
+    while (1)
     {
         printf("\n=== OTA Daemon Running ===\n");
 
         /* Step 1: Check update from server */
-        if(check_update(url, expected_hash))
+        if (check_update(url, expected_hash))
         {
             printf("Update Info Received:\n");
             printf("URL: %s\n", url);
@@ -28,43 +29,49 @@ int main()
             /* Step 2: Download firmware */
             printf("Downloading firmware...\n");
 
-            if(download_firmware())
+            if (download_firmware())
             {
                 printf("Download complete\n");
 
-                /* Step 3: Verify firmware */
-                if(verify_firmware(calculated_hash))
+                /* Step 3: Verify signature */
+                if (!verify_signature("downloaded.bin", "firmware.sig"))
                 {
-                    printf("Calculated Hash: %s\n", calculated_hash);
-                    printf("Expected Hash: [%s]\n", expected_hash);
+                    printf("Signature INVALID ❌\n");
+                    continue;  // skip this cycle, try again later
+                }
 
-                    /* Step 4: Compare hash */
-                    if(strcmp(calculated_hash, expected_hash) == 0)
+                printf("Signature VALID ✅\n");
+
+                /* Step 4: Calculate hash */
+                if (!calculate_hash("downloaded.bin", calculated_hash))
+                {
+                    printf("Hash calculation failed ❌\n");
+                    continue;
+                }
+
+                printf("Calculated Hash: %s\n", calculated_hash);
+
+                /* Step 5: Compare hash */
+                if (strcmp(calculated_hash, expected_hash) == 0)
+                {
+                    printf("Firmware VALID\n");
+
+                    /* Step 6: Install firmware */
+                    if (install_firmware())
                     {
-                        printf("Firmware VALID\n");
-
-
-                        /* Step 5: Install firmware */
-                        if(install_firmware())
-                        {
-                            /* Step 6: Switch slot */
-                            switch_slot();
-                            printf("OTA Update Successful ✅\n");
-                        }
-                        else
-                        {
-                            printf("Installation Failed ❌\n");
-                            rollback();
-                        }
+                        /* Step 7: Switch slot */
+                        switch_slot();
+                        printf("OTA Update Successful ✅\n");
                     }
                     else
                     {
-                        printf("Firmware INVALID ❌ → Rejecting update\n");
+                        printf("Installation Failed ❌\n");
+                        rollback();
                     }
                 }
                 else
                 {
-                    printf("Verification Failed ❌\n");
+                    printf("Hash Mismatch ❌\n");
                 }
             }
             else

@@ -14,12 +14,15 @@ def calculate_hash(file_path):
 
 @app.route("/update")
 def update():
+    with open("firmware.sig", "rb") as f:
+        signature = f.read().hex()
+
     return jsonify({
         "version": "1.0.1",
-        "url": "http://127.0.0.1:5000/firmware",
-        "hash": calculate_hash(FIRMWARE_PATH)
+        "url": "https://127.0.0.1:5000/firmware",
+        "hash": calculate_hash(FIRMWARE_PATH),
+        "signature": signature
     })
-
 @app.route("/firmware")
 def firmware():
     return send_file(FIRMWARE_PATH, as_attachment=True)
