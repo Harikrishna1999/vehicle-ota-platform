@@ -40,8 +40,12 @@ int check_update(char *url, char *hash)
     curl_easy_setopt(curl, CURLOPT_WRITEFUNCTION, write_callback);
 
     // ✅ TLS (TEMPORARY DISABLE for self-signed)
-    curl_easy_setopt(curl, CURLOPT_SSL_VERIFYPEER, 0L);
-    curl_easy_setopt(curl, CURLOPT_SSL_VERIFYHOST, 0L);
+    curl_easy_setopt(curl, CURLOPT_SSL_VERIFYPEER, 1L);
+    curl_easy_setopt(curl, CURLOPT_SSL_VERIFYHOST, 2L);
+
+
+    curl_easy_setopt(curl, CURLOPT_CAINFO, "/etc/ota/cert.pem");
+
 
     // 🔁 Retry logic
     int retries = 3;
