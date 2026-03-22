@@ -21,8 +21,16 @@ int check_update(char *url, char *hash)
 
     if(curl)
     {
-        curl_easy_setopt(curl, CURLOPT_URL, "http://127.0.0.1:5000/update");
+        curl_easy_setopt(curl, CURLOPT_URL, "https://127.0.0.1:5000/update");
         curl_easy_setopt(curl, CURLOPT_WRITEFUNCTION, write_callback);
+
+
+
+
+        curl_easy_setopt(curl, CURLOPT_SSL_VERIFYPEER, 0L);
+        curl_easy_setopt(curl, CURLOPT_SSL_VERIFYHOST, 0L);
+
+        curl_easy_setopt(curl, CURLOPT_CAINFO, "/mnt/d/Embedded_Linux/Project/vehicle-ota-platform-qemu/certs/cert.pem");
 
         res = curl_easy_perform(curl);
 

@@ -16,7 +16,7 @@ def calculate_hash(file_path):
 def update():
     return jsonify({
         "version": "1.0.1",
-        "url": "http://127.0.0.1:5000/firmware",
+        "url": "https://127.0.0.0.1:5000/firmware",
         "hash": calculate_hash(FIRMWARE_PATH)
     })
 
@@ -25,4 +25,5 @@ def firmware():
     return send_file(FIRMWARE_PATH, as_attachment=True)
 
 if __name__ == "__main__":
-    app.run(host="0.0.0.0", port=5000)
+     
+                     app.run(host="0.0.0.0", port=5000, ssl_context=("certs/cert.pem", "certs/key.pem"))
