@@ -9,6 +9,7 @@
 
 int main()
 {
+    setbuf(stdout,NULL);
     char url[256];
     char expected_hash[65];
     char calculated_hash[65];
