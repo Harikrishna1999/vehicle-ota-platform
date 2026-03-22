@@ -1,2 +1,3 @@
 *.bin
 ota-daemon
+certs/key.pem

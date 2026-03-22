@@ -25,4 +25,11 @@ def firmware():
     return send_file(FIRMWARE_PATH, as_attachment=True)
 
 if __name__ == "__main__":
-    app.run(host="0.0.0.0", port=5000)
+    app.run(
+    host="127.0.0.1",
+    port=5000,
+    ssl_context=(
+        "/mnt/d/Embedded_Linux/Project/vehicle-ota-platform-qemu/certs/cert.pem",
+        "/mnt/d/Embedded_Linux/Project/vehicle-ota-platform-qemu/certs/key.pem"
+    )
+)
